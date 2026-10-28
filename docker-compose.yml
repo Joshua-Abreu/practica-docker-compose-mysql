@@ -1,0 +1,38 @@
+services:
+  # Servicio de la aplicación Node.js
+  web:
+    image: node:20-alpine
+    container_name: app_web_node
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./src:/app
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_USER: appuser
+      DB_PASSWORD: apppassword
+      DB_NAME: holamundo_db
+    command: sh -c "npm install && npm start"
+    depends_on:
+      - db
+
+  # Servicio de la base de datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: db_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: holamundo_db
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
